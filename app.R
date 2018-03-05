@@ -116,7 +116,6 @@ server <- function(input, output, session) {
       geom_bar_interactive(aes(tooltip = Dons, data_id = Participants),stat="identity") +
       coord_flip() +
       geom_hline(yintercept = 50, linetype = 2) +
-      scale_fill_brewer(palette = "Blues") +
       scale_y_continuous(name = "Dons d'alliance en K", breaks=seq(0,max(tab$Dons),50)) +
       xlab("Participants")
     
@@ -134,7 +133,6 @@ server <- function(input, output, session) {
       geom_bar_interactive(aes(tooltip = Dons, data_id = Participants),stat="identity") +
       coord_flip() +
       geom_hline(yintercept = 50, linetype = 2) +
-      scale_fill_brewer(palette = "Blues") +
       scale_y_continuous(name = "Dons d'alliance en K", breaks=seq(0,max(tab$Dons),50)) +
       xlab("Participants")
     

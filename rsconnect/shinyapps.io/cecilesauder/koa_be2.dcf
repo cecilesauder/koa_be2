@@ -5,6 +5,6 @@ account: cecilesauder
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 292902
-bundleId: 1252369
+bundleId: 1253195
 url: https://cecilesauder.shinyapps.io/koa_be2/
-when: 1520212283.72575
+when: 1520259404.9042

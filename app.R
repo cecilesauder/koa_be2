@@ -51,10 +51,12 @@ server <- function(input, output, session) {
   output$plot <- renderggiraph({
     gg <- tab %>% 
       ggplot(aes(x = Participants, y = Dons , fill = Rang)) + 
-      theme_light() +
-      geom_bar_interactive(aes(tooltip = Participants, data_id = Participants),stat="identity") +
+      theme_bw() +
+      geom_bar_interactive(aes(tooltip = Dons, data_id = Participants),stat="identity") +
       coord_flip() +
-      geom_hline(yintercept = 50, linetype = 2) 
+      geom_hline(yintercept = 50, linetype = 2) +
+      scale_fill_brewer(palette = "Blues") +
+      scale_y_continuous(name = "Dons d'alliance en K", breaks=seq(0,max(tab$Dons),50))
     
     
     ggiraph(code = print(gg), hover_css = "fill-opacity:.6;cursor:pointer;",

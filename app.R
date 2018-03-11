@@ -25,9 +25,14 @@ ui <- dashboardPage(
       box(
         width = 4,
         height = 820,
-        title = "Tableau des dons d'alliance du 4 mars 2018",
+        title = "Tableau des dons d'alliance",
         solidHeader = TRUE,
         status = "info",
+        fileInput("file", 
+                  label = tags$a("Exemple de fichier CSV à importer", 
+                                 href = "https://github.com/cecilesauder/koa_be2/blob/master/koa_04_03.csv",
+                                 target="_blank" ),
+                  buttonLabel = "Importer un fichier CSV..."),
         dataTableOutput("tableau")
       ),
       box(
@@ -57,52 +62,61 @@ ui <- dashboardPage(
 # Define server 
 server <- function(input, output, session) {
   
-  tab <- read.csv("koa_04_03.csv", sep = ",", header = TRUE )
-  tab <- tab %>% 
-    select(Participants, Dons, Rang) %>%
-    filter(Dons != 0) %>%
-    arrange(-Dons) %>% 
-    mutate(Dons = Dons/1000)
+  tab <- reactive({
+    if(is.null(input$file)){
+      tab <- read.csv("koa_11_03.csv", sep = ",", header = TRUE )
+    }else{
+      tab <- read.csv(input$file$datapath, sep = ",", header = TRUE )
+    }
+    tab <- tab %>% 
+      select(Participants, Dons, Rang) %>%
+      arrange(-Dons) %>% 
+      mutate(Dons = Dons/1000)
+  })
   
-  nb_mbr <- nrow(tab)
+  nb_mbr <- reactive( nrow(tab()))
   
-  moy <- round( mean(tab$Dons), 3)
+  moy <- reactive ( round( mean(tab()$Dons), 3) ) 
   
-  tab1 <- tab %>% 
-    filter(Dons > 50)
+  tab1 <- reactive({
+    tab() %>% 
+      filter(Dons > 50)
+  }) 
   
-  nb_plus <- nrow(tab1)
+  nb_plus <- reactive( nrow(tab1()))
   
-  tab2 <- tab %>% 
-    filter(Dons < 50)
+  tab2 <- reactive({
+    tab() %>% 
+      filter(Dons < 50)
+  }) 
   
-  nb_moins <- nrow(tab2)
+  nb_moins <- reactive( nrow(tab2()) )
   
   
   output$meanbox <- renderValueBox({
     valueBox(
-      value = paste0(moy, " K"), "Moyenne des dons", icon = icon("dollar"),
+      value = paste0(moy(), " K"), "Moyenne des dons", icon = icon("dollar"),
       color = "maroon"
     )
   })
   
   output$plusbox <- renderValueBox({
     valueBox(
-      value = paste0(nb_plus, "/", nb_mbr, " membres"), "Plus de 50k", icon = icon("thumbs-up", lib = "glyphicon"),
+      value = paste0(nb_plus(), "/", nb_mbr(), " membres"), "Plus de 50k", icon = icon("thumbs-up", lib = "glyphicon"),
       color = "maroon"
     )
   })
   
   output$moinsbox <- renderValueBox({
     valueBox(
-      value = paste0(nb_moins, "/", nb_mbr, " membres"), "Moins de 50k", icon = icon("thumbs-down", lib = "glyphicon"),
+      value = paste0(nb_moins(), "/", nb_mbr(), " membres"), "Moins de 50k", icon = icon("thumbs-down", lib = "glyphicon"),
       color = "maroon"
     )
   })
   
   
   output$tableau <- renderDataTable(
-    tab,
+    tab(),
     options = list(
       pageLength = 15
     )
@@ -110,13 +124,13 @@ server <- function(input, output, session) {
   
   output$plot1 <- renderggiraph({
     
-    gg <- tab1 %>% 
+    gg <- tab1() %>% 
       ggplot(aes(x = reorder(Participants, Dons), y = Dons , fill = Rang)) + 
       theme_bw() +
       geom_bar_interactive(aes(tooltip = Dons, data_id = Participants),stat="identity") +
       coord_flip() +
       geom_hline(yintercept = 50, linetype = 2) +
-      scale_y_continuous(name = "Dons d'alliance en K", breaks=seq(0,max(tab$Dons),50)) +
+      scale_y_continuous(name = "Dons d'alliance en K", breaks=seq(0,max(tab()$Dons),50)) +
       xlab("Participants")
     
     
@@ -127,13 +141,13 @@ server <- function(input, output, session) {
   
   output$plot2 <- renderggiraph({
     
-    gg <- tab2 %>% 
+    gg <- tab2() %>% 
       ggplot(aes(x = reorder(Participants, Dons), y = Dons , fill = Rang)) + 
       theme_bw() +
       geom_bar_interactive(aes(tooltip = Dons, data_id = Participants),stat="identity") +
       coord_flip() +
       geom_hline(yintercept = 50, linetype = 2) +
-      scale_y_continuous(name = "Dons d'alliance en K", breaks=seq(0,max(tab$Dons),50)) +
+      scale_y_continuous(name = "Dons d'alliance en K", breaks=seq(0,max(tab()$Dons),50)) +
       xlab("Participants")
     
     

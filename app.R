@@ -36,7 +36,7 @@ ui <- dashboardPage(
         dataTableOutput("tableau")
       ),
       box(
-        title = "Plus de 50k de dons",
+        title = "Plus de 40k de dons",
         solidHeader = TRUE, 
         status = "info",
         width = 4,
@@ -45,7 +45,7 @@ ui <- dashboardPage(
         
       ),
       box(
-        title = "Moins de 50k de dons",
+        title = "Moins de 40k de dons",
         solidHeader = TRUE, 
         status = "info",
         width = 4,
@@ -64,7 +64,7 @@ server <- function(input, output, session) {
   
   tab <- reactive({
     if(is.null(input$file)){
-      tab <- read.csv("koa_11_03.csv", sep = ",", header = TRUE )
+      tab <- read.csv("koa_be2_18_03.csv", sep = ",", header = TRUE )
     }else{
       tab <- read.csv(input$file$datapath, sep = ",", header = TRUE )
     }
@@ -80,14 +80,14 @@ server <- function(input, output, session) {
   
   tab1 <- reactive({
     tab() %>% 
-      filter(Dons > 50)
+      filter(Dons > 40)
   }) 
   
   nb_plus <- reactive( nrow(tab1()))
   
   tab2 <- reactive({
     tab() %>% 
-      filter(Dons < 50)
+      filter(Dons < 40)
   }) 
   
   nb_moins <- reactive( nrow(tab2()) )
@@ -102,14 +102,14 @@ server <- function(input, output, session) {
   
   output$plusbox <- renderValueBox({
     valueBox(
-      value = paste0(nb_plus(), "/", nb_mbr(), " membres"), "Plus de 50k", icon = icon("thumbs-up", lib = "glyphicon"),
+      value = paste0(nb_plus(), "/", nb_mbr(), " membres"), "Plus de 40k", icon = icon("thumbs-up", lib = "glyphicon"),
       color = "maroon"
     )
   })
   
   output$moinsbox <- renderValueBox({
     valueBox(
-      value = paste0(nb_moins(), "/", nb_mbr(), " membres"), "Moins de 50k", icon = icon("thumbs-down", lib = "glyphicon"),
+      value = paste0(nb_moins(), "/", nb_mbr(), " membres"), "Moins de 40k", icon = icon("thumbs-down", lib = "glyphicon"),
       color = "maroon"
     )
   })
@@ -129,8 +129,8 @@ server <- function(input, output, session) {
       theme_bw() +
       geom_bar_interactive(aes(tooltip = Dons, data_id = Participants),stat="identity") +
       coord_flip() +
-      geom_hline(yintercept = 50, linetype = 2) +
-      scale_y_continuous(name = "Dons d'alliance en K", breaks=seq(0,max(tab()$Dons),50)) +
+      geom_hline(yintercept = 40, linetype = 2) +
+      scale_y_continuous(name = "Dons d'alliance en K", breaks=seq(0,max(tab()$Dons),40)) +
       xlab("Participants")
     
     
@@ -146,8 +146,8 @@ server <- function(input, output, session) {
       theme_bw() +
       geom_bar_interactive(aes(tooltip = Dons, data_id = Participants),stat="identity") +
       coord_flip() +
-      geom_hline(yintercept = 50, linetype = 2) +
-      scale_y_continuous(name = "Dons d'alliance en K", breaks=seq(0,max(tab()$Dons),50)) +
+      geom_hline(yintercept = 40, linetype = 2) +
+      scale_y_continuous(name = "Dons d'alliance en K", breaks=seq(0,max(tab()$Dons),40)) +
       xlab("Participants")
     
     

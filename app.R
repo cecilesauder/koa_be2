@@ -64,7 +64,7 @@ server <- function(input, output, session) {
   
   tab <- reactive({
     if(is.null(input$file)){
-      tab <- read.csv("koa_be2_18_03.csv", sep = ",", header = TRUE )
+      tab <- read.csv("koa_01_04.csv", sep = ",", header = TRUE )
     }else{
       tab <- read.csv(input$file$datapath, sep = ",", header = TRUE )
     }
